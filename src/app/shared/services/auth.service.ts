@@ -69,10 +69,8 @@ export class AuthService {
 
     const appMetadata = {
       name: 'Tap Auth Demo Blocknative',
-      // icon: logoSVG,
       icon: '../../../assets/icon/icon-logo.svg',
-      // icon: base64CraneIcon,
-      // logo: logoSVG,
+      logo: '../../../assets/icon/icon-logo.svg',
       description: 'Connect to Tap Auth Demo',
       recommendedInjectedWallets: [
         { name: 'MetaMask', url: 'https://metamask.io' },
@@ -115,6 +113,10 @@ export class AuthService {
         this.updateConnectedWallets(update.wallets);
         console.log('Connected Wallets:', this.connectedWallets);
         this.updateUserDataEmitter$.next('');
+
+        if (update.wallets.length === 0) {
+          this.logOut();
+        }
       });
 
     this.unsubscribeRef = unsubscribe;
