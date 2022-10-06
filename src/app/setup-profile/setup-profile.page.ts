@@ -48,6 +48,6 @@ export class SetupProfilePage implements OnInit, OnDestroy {
   }
 
   logOut() {
-    this.authService.logOut();
+    this.authService.sampleLogOut();
   }
 }

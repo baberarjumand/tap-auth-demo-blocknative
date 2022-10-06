@@ -18,6 +18,12 @@
  * BROWSER POLYFILLS
  */
 
+//These two lines are required for Walletconnect...
+(window as any).global = window;
+global.Buffer = global.Buffer || require('buffer').Buffer;
+//That below is required for coinbase
+global.process = require('process');
+
 /** IE11 requires the following for NgClass support on SVG elements */
 // import 'classlist.js';  // Run `npm install --save classlist.js`.
 
@@ -57,8 +63,7 @@ import './zone-flags';
 /***************************************************************************************************
  * Zone JS is required by default for Angular itself.
  */
-import 'zone.js/dist/zone';  // Included with Angular CLI.
-
+import 'zone.js/dist/zone'; // Included with Angular CLI.
 
 /***************************************************************************************************
  * APPLICATION IMPORTS
