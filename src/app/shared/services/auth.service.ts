@@ -99,23 +99,58 @@ export class AuthService {
 
     const { unsubscribe } = this.initWeb3Onboard.state
       .select()
-      .pipe(
-        distinctUntilChanged((prev: any, curr: any) => {
-          if (prev.wallets.length === curr.wallets.length) {
-            return true;
-          } else {
-            return false;
-          }
-        })
-      )
+      // .pipe(
+      //   distinctUntilChanged((prev: any, curr: any) => {
+      //     if (prev.wallets.length === curr.wallets.length) {
+      //       return true;
+      //     } else {
+      //       return false;
+      //     }
+      //   })
+      // )
       .subscribe((update) => {
-        console.log('State Update:', update);
-        this.updateConnectedWallets(update.wallets);
-        console.log('Connected Wallets:', this.connectedWallets);
-        this.updateUserDataEmitter$.next('');
+        // console.log('State Update:', update);
+        // this.updateConnectedWallets(update.wallets);
+        // console.log('Connected Wallets:', this.connectedWallets);
+        // this.updateUserDataEmitter$.next('');
 
-        if (update.wallets.length === 0) {
-          this.logOut();
+        // if (update.wallets.length === 0) {
+        //   this.logOut();
+        // }
+
+        const currentWalletCount = this.connectedWallets.length;
+        const updatedWalletCount = this.getConnectedWalletsFromState(
+          update.wallets
+        ).length;
+
+        // console.log('connectedWallets: ' + currentWalletCount);
+        // console.log('stateUpdateWallets: ' + updatedWalletCount);
+
+        if (currentWalletCount === 0 && updatedWalletCount === 1) {
+          // log in
+          this.connectedWallets = this.getConnectedWalletsFromState(
+            update.wallets
+          );
+          this.isAuthenticated$.next(true);
+          this.isProfileComplete$.next(true);
+          this.router.navigate(['']);
+        } else if (
+          updatedWalletCount !== 0 &&
+          currentWalletCount !== updatedWalletCount
+        ) {
+          // update UI
+          this.connectedWallets = this.getConnectedWalletsFromState(
+            update.wallets
+          );
+          this.updateUserDataEmitter$.next('');
+        } else if (updatedWalletCount === 0) {
+          // log out
+          this.connectedWallets = this.getConnectedWalletsFromState(
+            update.wallets
+          );
+          this.isAuthenticated$.next(false);
+          this.isProfileComplete$.next(false);
+          this.router.navigate(['/login']);
         }
       });
 
@@ -156,14 +191,14 @@ export class AuthService {
         }
       }
 
-      console.log('labelsArr:', labelsArr);
+      // console.log('labelsArr:', labelsArr);
       const labelsToDisconnect = new Set(labelsArr);
-      console.log('labelsSet:', labelsToDisconnect);
+      // console.log('labelsSet:', labelsToDisconnect);
 
       for (const walletLabel of labelsToDisconnect) {
-        console.log('Disconnecting ' + walletLabel);
+        // console.log('Disconnecting ' + walletLabel);
         await this.initWeb3Onboard.disconnectWallet({ label: walletLabel });
-        console.log('Disconnected ' + walletLabel);
+        // console.log('Disconnected ' + walletLabel);
       }
 
       this.isAuthenticated$.next(false);
@@ -174,7 +209,7 @@ export class AuthService {
     }
   }
 
-  updateConnectedWallets(walletsArr) {
+  getConnectedWalletsFromState(walletsArr) {
     const arr = [];
     if (walletsArr.length > 0) {
       for (const wallet of walletsArr) {
@@ -191,7 +226,8 @@ export class AuthService {
       }
     }
 
-    this.connectedWallets = arr;
+    // this.connectedWallets = arr;
+    return arr;
   }
 
   getConnectedWallets() {

@@ -44,13 +44,13 @@ export class HomePage implements OnInit, OnDestroy {
       await this.util.showLoading();
       this.isLoading = true;
       this.connectedWallets = this.authService.getConnectedWallets();
-      console.log('Connected Wallets in HomePage:', this.connectedWallets);
+      // console.log('Connected Wallets in HomePage:', this.connectedWallets);
     } catch (error) {
       console.log('Error in home fetchUserData:', error);
     } finally {
-      await this.util.hideLoading();
       this.isLoading = false;
       this.changeDetectorRef.detectChanges();
+      await this.util.hideLoading();
     }
   }
 
